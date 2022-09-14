@@ -3,7 +3,6 @@ services:
   app:
     build:
       context: .
-    image: mysql-nodejs-api:v1
     container_name: server
     # restart: always # use only on production
     depends_on:
@@ -14,7 +13,7 @@ services:
       # why not .:/project? this will mount everything to WORKDIR where the node_modules folder will be copied everytime too.
       - ./package.json:/project/package.json
       - ./src:/project/src
-    entrypoint: ['/project/src/scripts/wait-for-it.sh', 'database:3306', "--"]
+    entrypoint: ['/project/src/scripts/wait-for', 'database:3306', "--"]
     command: npm run dev
   database:
     image: mysql
