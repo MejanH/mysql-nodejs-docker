@@ -1,0 +1,26 @@
+name: mysql-nodejs-server
+services:
+  app:
+    build:
+      context: .
+    image: mysql-nodejs-api:v1
+    container_name: server
+    # restart: always # use only on production
+    depends_on:
+      - database
+    ports:
+      - "8080:8080" # the port must be same as the port we are using in nodejs server
+    volumes:
+      # why not .:/project? this will mount everything to WORKDIR where the node_modules folder will be copied everytime too.
+      - ./package.json:/project/package.json
+      - ./src:/project/src
+    entrypoint: ['/project/src/scripts/wait-for-it.sh', 'database:3306', "--"]
+    command: npm run dev
+  database:
+    image: mysql
+    container_name: mysql
+    # restart: always # use only on production
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+    ports:
+      - "3306:3306"
